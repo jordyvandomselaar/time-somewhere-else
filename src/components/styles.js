@@ -89,3 +89,14 @@ export const Input = styled.input`
   padding: 0;
   border-width: 1px;
 `;
+
+export const Text = styled.p`
+  margin: 0;
+
+  ${(props) => {
+    if (props.variant === "app")
+      return css`
+        font-size: 1.3rem;
+      `;
+  }}
+`;

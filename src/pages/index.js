@@ -2,9 +2,14 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import moment from "moment-timezone";
 import Layout from "../components/Layout";
-import { DayItemWrapper, Input, Label, Select } from "../components/styles";
+import {
+  DayItemWrapper,
+  Input,
+  Label,
+  Select,
+  Text,
+} from "../components/styles";
 import Box from "../components/Box";
-import Text from "../components/Text";
 
 function Home() {
   const [day, setDay] = useQueryParams("day");
@@ -24,7 +29,11 @@ function Home() {
 
   return (
     <Layout>
-      <span>Time Somewhere Else</span>
+      <Box paddingLeft={2} paddingTop={2}>
+        <Text variant="app" as="span">
+          Time Somewhere Else
+        </Text>
+      </Box>
       <Layout.Content>
         <form>
           <Box px={[3]}>
@@ -36,7 +45,7 @@ function Home() {
                 value={timezoneFrom}
                 onChange={setTimezoneFrom}
               />
-              <Box paddingLeft={[, 2]} paddingTop={[2]}>
+              <Box paddingLeft={[, 2]} paddingTop={[2, 0]}>
                 <TimeSelector
                   onChangeFromTime={setTimeFrom}
                   valueFromTime={timeFrom}
@@ -50,7 +59,7 @@ function Home() {
               flexDirection={["column", "row"]}
             >
               <TimezoneSelector value={timezoneTo} onChange={setTimezoneTo} />
-              <Box paddingLeft={[, 2]} paddingTop={[2]}>
+              <Box paddingLeft={[, 2]} paddingTop={[2, 0]}>
                 <Text>
                   {resultMoment.tz(timezoneTo) instanceof moment
                     ? resultMoment.tz(timezoneTo).format("dddd HH:mm:ss")
