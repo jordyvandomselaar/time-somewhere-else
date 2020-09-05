@@ -47,7 +47,7 @@ function Home() {
       <Layout.Content>
         <form>
           <Box px={[3]}>
-            <Box paddingBottom={4}>
+            <Box paddingBottom={2}>
               <DaySelector onChange={setDay} selected={day} />
             </Box>
             <Box display="flex" flexDirection={["column", "row"]}>
@@ -92,18 +92,17 @@ function DaySelector({ onChange, selected }) {
       display="flex"
       flexDirection={["column", "row"]}
       width="100%"
-      justifyContent="space-between"
-      maxWidth="700px"
-      margin="0 auto"
       flexWrap="wrap"
     >
       {weekdays.map((weekday) => (
-        <DayItem
-          checked={selected === weekday}
-          onChange={() => onChange(weekday)}
-        >
-          <Text as="span">{weekday}</Text>
-        </DayItem>
+        <Box paddingRight={1}>
+          <DayItem
+              checked={selected === weekday}
+              onChange={() => onChange(weekday)}
+          >
+            <Text as="span">{weekday}</Text>
+          </DayItem>
+        </Box>
       ))}
     </Box>
   );
