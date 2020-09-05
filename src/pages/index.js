@@ -1,15 +1,21 @@
-import React, { useEffect } from "react";
+import React, {useEffect, useState} from "react";
 import { useRouter } from "next/router";
 import moment from "moment-timezone";
 import Layout from "../components/Layout";
 import {
   DayItemWrapper,
   Input,
-  Label,
-  Select,
+  SearchSelectWrapper,
   Text,
 } from "../components/styles";
 import Box from "../components/Box";
+import SelectSearch from "react-select-search/dist/cjs";
+
+export async function getServerSideProps(context) {
+  return {
+    props: {}, // Use server side rendering until https://github.com/vercel/next.js/issues/8259 is fixed
+  }
+}
 
 function Home() {
   const [day, setDay] = useQueryParams("day");
@@ -23,9 +29,13 @@ function Home() {
     timezoneFrom
   );
 
+  const router = useRouter()
+
   useEffect(() => {
-    setTimezoneFrom(moment.tz.guess());
-  }, []);
+    if (!timezoneFrom) {
+      setTimezoneFrom(moment.tz.guess());
+    }
+  }, [router.query]);
 
   return (
     <Layout>
@@ -92,7 +102,7 @@ function DaySelector({ onChange, selected }) {
           checked={selected === weekday}
           onChange={() => onChange(weekday)}
         >
-          {weekday}
+          <Text as="span">{weekday}</Text>
         </DayItem>
       ))}
     </Box>
@@ -118,17 +128,13 @@ function DayItem({ children, checked, ...inputProps }) {
 
 function TimeSelector({ onChangeFromTime, valueFromTime }) {
   return (
-    <>
-      <Label>
-        <Input
-          placeholder="23:00"
-          type="text"
-          name="time_from"
-          value={valueFromTime}
-          onChange={(e) => onChangeFromTime(e.currentTarget.value)}
-        />
-      </Label>
-    </>
+    <Input
+      placeholder="23:00"
+      type="text"
+      name="time_from"
+      value={valueFromTime}
+      onChange={(e) => onChangeFromTime(e.currentTarget.value)}
+    />
   );
 }
 
@@ -137,18 +143,18 @@ function TimezoneSelector({ onChange, value }) {
 
   return (
     <>
-      <div>
-        <Label>
-          <Select
-            value={value}
-            onChange={(e) => onChange(e.currentTarget.value)}
-          >
-            {timezones.map((timezone) => (
-              <option value={timezone}>{timezone}</option>
-            ))}
-          </Select>
-        </Label>
-      </div>
+      <SearchSelectWrapper>
+        <SelectSearch
+          value={value}
+          search
+          placeholder="Select a timezone"
+          onChange={(value) => onChange(value)}
+          options={timezones.map((timezone) => ({
+            name: timezone,
+            value: timezone,
+          }))}
+        />
+      </SearchSelectWrapper>
     </>
   );
 }
