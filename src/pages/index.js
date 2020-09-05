@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {useRouter} from "next/router";
 import moment from "moment-timezone";
 
@@ -14,15 +14,24 @@ function Home() {
         timezoneFrom,
     );
 
+    useEffect(() => {
+        setTimezoneFrom(moment.tz.guess())
+    }, [])
 
     return (
         <form>
-            <DaySelector onChange={setDay} selected={day}/>
-            <TimeSelector onChangeFromTime={setTimeFrom} valueFromTime={timeFrom}/>
-            <TimezoneSelector valueTimezoneFrom={timezoneFrom} onChangeTimezoneFrom={setTimezoneFrom}
-                              valueTimezoneTo={timezoneTo} onChangeTimezoneTo={setTimezoneTo}/>
+            <div>
+                <DaySelector onChange={setDay} selected={day}/>
+            </div>
+            <div>
+                <TimeSelector onChangeFromTime={setTimeFrom} valueFromTime={timeFrom}/>
+            </div>
+            <div>
+                <TimezoneSelector valueTimezoneFrom={timezoneFrom} onChangeTimezoneFrom={setTimezoneFrom}
+                                  valueTimezoneTo={timezoneTo} onChangeTimezoneTo={setTimezoneTo}/>
+            </div>
 
-            <p>Time in {timezoneTo}: {resultMoment.tz(timezoneTo).toString()}</p>
+            <p>Time in {timezoneTo}: {resultMoment.tz(timezoneTo)?.toString()}</p>
         </form>
     );
 }
@@ -37,7 +46,9 @@ function DaySelector({onChange, selected}) {
             <legend>Pick a day</legend>
 
             {weekdays.map(weekday => (
-                <DayItem checked={selected === weekday} onChange={() => onChange(weekday)}>{weekday}</DayItem>
+                <div>
+                    <DayItem checked={selected === weekday} onChange={() => onChange(weekday)}>{weekday}</DayItem>
+                </div>
             ))}
         </fieldset>
     );
@@ -57,7 +68,7 @@ function TimeSelector({onChangeFromTime, valueFromTime}) {
     return <>
         <label>
             From time
-            <input type="text" name="time_from" value={valueFromTime}
+            <input placeholder="23:00" type="text" name="time_from" value={valueFromTime}
                    onChange={e => onChangeFromTime(e.currentTarget.value)}/>
         </label>
     </>;
@@ -67,18 +78,22 @@ function TimezoneSelector({onChangeTimezoneFrom, onChangeTimezoneTo, valueTimezo
     const timezones = moment.tz.names();
 
     return <>
-        <label>
-            From timezone
-            <select value={valueTimezoneFrom} onChange={e => onChangeTimezoneFrom(e.currentTarget.value)} name="timezone_from" id="timezone_from">
-                {timezones.map(timezone => <option value={timezone}>{timezone}</option>)}
-            </select>
-        </label>
-        <label>
-            To timezone
-            <select value={valueTimezoneTo} onChange={e => onChangeTimezoneTo(e.currentTarget.value)} name="timezone_to" id="timezone_to">
-                {timezones.map(timezone => <option value={timezone}>{timezone}</option>)}
-            </select>
-        </label>
+        <div>
+            <label>
+                From timezone
+                <select value={valueTimezoneFrom} onChange={e => onChangeTimezoneFrom(e.currentTarget.value)} name="timezone_from" id="timezone_from">
+                    {timezones.map(timezone => <option value={timezone}>{timezone}</option>)}
+                </select>
+            </label>
+        </div>
+        <div>
+            <label>
+                To timezone
+                <select value={valueTimezoneTo} onChange={e => onChangeTimezoneTo(e.currentTarget.value)} name="timezone_to" id="timezone_to">
+                    {timezones.map(timezone => <option value={timezone}>{timezone}</option>)}
+                </select>
+            </label>
+        </div>
     </>;
 }
 
