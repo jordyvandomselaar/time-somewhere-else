@@ -5,13 +5,18 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "format": "prettier './src/**/*.js' --write"
   },
   "dependencies": {
     "moment": "^2.27.0",
     "moment-timezone": "^0.5.31",
     "next": "9.5.3",
     "react": "16.13.1",
-    "react-dom": "16.13.1"
+    "react-dom": "16.13.1",
+    "styled-components": "^5.2.0"
+  },
+  "devDependencies": {
+    "prettier": "2.1.1"
   }
 }
