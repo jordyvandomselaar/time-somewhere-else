@@ -1,6 +1,10 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import moment from "moment-timezone";
+import Layout from "../components/Layout";
+import { DayItemWrapper, Input, Label, Select } from "../components/styles";
+import Box from "../components/Box";
+import Text from "../components/Text";
 
 function Home() {
   const [day, setDay] = useQueryParams("day");
@@ -19,117 +23,122 @@ function Home() {
   }, []);
 
   return (
-    <form>
-      <div>
-        <DaySelector onChange={setDay} selected={day} />
-      </div>
-      <div>
-        <TimeSelector onChangeFromTime={setTimeFrom} valueFromTime={timeFrom} />
-      </div>
-      <div>
-        <TimezoneSelector
-          valueTimezoneFrom={timezoneFrom}
-          onChangeTimezoneFrom={setTimezoneFrom}
-          valueTimezoneTo={timezoneTo}
-          onChangeTimezoneTo={setTimezoneTo}
-        />
-      </div>
-
-      <p>
-        Time in {timezoneTo}: {resultMoment.tz(timezoneTo)?.toString()}
-      </p>
-    </form>
+    <Layout>
+      <span>Time Somewhere Else</span>
+      <Layout.Content>
+        <form>
+          <Box px={[3]}>
+            <Box paddingBottom={4}>
+              <DaySelector onChange={setDay} selected={day} />
+            </Box>
+            <Box display="flex" flexDirection={["column", "row"]}>
+              <TimezoneSelector
+                value={timezoneFrom}
+                onChange={setTimezoneFrom}
+              />
+              <Box paddingLeft={[, 2]} paddingTop={[2]}>
+                <TimeSelector
+                  onChangeFromTime={setTimeFrom}
+                  valueFromTime={timeFrom}
+                />
+              </Box>
+            </Box>
+            <hr />
+            <Box
+              display="flex"
+              margin="0 auto"
+              flexDirection={["column", "row"]}
+            >
+              <TimezoneSelector value={timezoneTo} onChange={setTimezoneTo} />
+              <Box paddingLeft={[, 2]} paddingTop={[2]}>
+                <Text>
+                  {resultMoment.tz(timezoneTo) instanceof moment
+                    ? resultMoment.tz(timezoneTo).format("dddd HH:mm:ss")
+                    : "Enter a valid time(zone)…"}
+                </Text>
+              </Box>
+            </Box>
+          </Box>
+        </form>
+      </Layout.Content>
+    </Layout>
   );
 }
-
-export default Home;
 
 function DaySelector({ onChange, selected }) {
   const weekdays = moment.weekdays();
 
   return (
-    <fieldset>
-      <legend>Pick a day</legend>
-
+    <Box
+      display="flex"
+      flexDirection={["column", "row"]}
+      width="100%"
+      justifyContent="space-between"
+      maxWidth="700px"
+      margin="0 auto"
+      flexWrap="wrap"
+    >
       {weekdays.map((weekday) => (
-        <div>
-          <DayItem
-            checked={selected === weekday}
-            onChange={() => onChange(weekday)}
-          >
-            {weekday}
-          </DayItem>
-        </div>
+        <DayItem
+          checked={selected === weekday}
+          onChange={() => onChange(weekday)}
+        >
+          {weekday}
+        </DayItem>
       ))}
-    </fieldset>
+    </Box>
   );
 }
 
-function DayItem({ children, ...inputProps }) {
+function DayItem({ children, checked, ...inputProps }) {
   return (
-    <label>
-      {children}
-      <input {...inputProps} type="radio" id="day" name="day" />
-    </label>
+    <DayItemWrapper checked={checked}>
+      <label>
+        {children}
+        <input
+          {...inputProps}
+          checked={checked}
+          type="radio"
+          id="day"
+          name="day"
+        />
+      </label>
+    </DayItemWrapper>
   );
 }
 
 function TimeSelector({ onChangeFromTime, valueFromTime }) {
   return (
     <>
-      <label>
-        From time
-        <input
+      <Label>
+        <Input
           placeholder="23:00"
           type="text"
           name="time_from"
           value={valueFromTime}
           onChange={(e) => onChangeFromTime(e.currentTarget.value)}
         />
-      </label>
+      </Label>
     </>
   );
 }
 
-function TimezoneSelector({
-  onChangeTimezoneFrom,
-  onChangeTimezoneTo,
-  valueTimezoneFrom,
-  valueTimezoneTo,
-}) {
+function TimezoneSelector({ onChange, value }) {
   const timezones = moment.tz.names();
 
   return (
     <>
       <div>
-        <label>
-          From timezone
-          <select
-            value={valueTimezoneFrom}
-            onChange={(e) => onChangeTimezoneFrom(e.currentTarget.value)}
-            name="timezone_from"
-            id="timezone_from"
+        <Label>
+          <Select
+            value={value}
+            onChange={(e) => onChange(e.currentTarget.value)}
           >
             {timezones.map((timezone) => (
               <option value={timezone}>{timezone}</option>
             ))}
-          </select>
-        </label>
-      </div>
-      <div>
-        <label>
-          To timezone
-          <select
-            value={valueTimezoneTo}
-            onChange={(e) => onChangeTimezoneTo(e.currentTarget.value)}
-            name="timezone_to"
-            id="timezone_to"
-          >
-            {timezones.map((timezone) => (
-              <option value={timezone}>{timezone}</option>
-            ))}
-          </select>
-        </label>
+          </Select>
+        </Label>
       </div>
     </>
   );
@@ -150,3 +159,5 @@ function useQueryParams(key) {
       }),
   ];
 }
+
+export default Home;
